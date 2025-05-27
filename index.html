@@ -147,9 +147,13 @@
     <input type="number" id="team2Score">
 
     <button onclick="updateScores()">Submit Score</button>
-    <button onclick="updateTable()" style="padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
-        Update Standings
-    </button>
+    <h2>Manage Teams</h2>
+<input type="text" id="newTeam" placeholder="New Team Name">
+<button onclick="addTeam()">Add Team</button>
+
+<select id="deleteTeam"></select>
+<button onclick="deleteTeam()">Delete Selected Team</button>
+     
 
 
     <script>
@@ -194,7 +198,7 @@
 }
 
         function populateDropdowns() {
-            let dropdowns = [document.getElementById("team1"), document.getElementById("team2")];
+            let dropdowns = [document.getElementById("team1"), document.getElementById("team2"),document.getElementById("deleteTeam")];
             dropdowns.forEach(dropdown => dropdown.innerHTML = "");
             [...groupA].forEach(team => {
                 dropdowns.forEach(dropdown => {
@@ -280,7 +284,42 @@ window.onload = function() {
     }
 };
 
+function addTeam() {
+    const team = document.getElementById("newTeam").value.trim();
+    if (!team) {
+        alert("Enter a team name.");
+        return;
+    }
+    if (groupA.includes(team)) {
+        alert("Team already exists.");
+        return;
+    }
+    groupA.push(team);
+    standings[team] = { P: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0, GD: 0, Pts: 0 };
 
+    localStorage.setItem("groupA", JSON.stringify(groupA));
+    localStorage.setItem("standings", JSON.stringify(standings));
+    
+    populateDropdowns();
+    populateResetDropdown();
+    document.getElementById("newTeam").value = "";
+    renderTables();
+}
+
+function deleteTeam() {
+    const team = document.getElementById("deleteTeam").value;
+    if (!confirm(`Are you sure you want to delete ${team}?`)) return;
+
+    groupA = groupA.filter(t => t !== team);
+    delete standings[team];
+
+    localStorage.setItem("groupA", JSON.stringify(groupA));
+    localStorage.setItem("standings", JSON.stringify(standings));
+
+    populateDropdowns();
+    populateResetDropdown();
+    renderTables();
+}
 
 function updateTable(tableId, group) {
     let table = document.getElementById(tableId);
