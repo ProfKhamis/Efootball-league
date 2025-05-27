@@ -198,7 +198,7 @@
 }
 
         function populateDropdowns() {
-            let dropdowns = [document.getElementById("team1"), document.getElementById("team2"),document.getElementById("deleteTeam")];
+            let dropdowns = [document.getElementById("team1"), document.getElementById("team2"),document.getElementById("deleteTeam"), document.getElementById(resetTeamStandings)];
             dropdowns.forEach(dropdown => dropdown.innerHTML = "");
             [...groupA].forEach(team => {
                 dropdowns.forEach(dropdown => {
