@@ -298,7 +298,7 @@ function addTeam() {
     standings[team] = { P: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0, GD: 0, Pts: 0 };
 
     localStorage.setItem("groupA", JSON.stringify(groupA));
-    localStorage.setItem("standings", JSON.stringify(standings));
+localStorage.setItem("standings", JSON.stringify(standings));
     
     populateDropdowns();
     populateResetDropdown();
