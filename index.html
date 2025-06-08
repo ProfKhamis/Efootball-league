@@ -211,7 +211,7 @@ function handleEditTeam() {
     standings[team].P = newP;   // Update matches played
     standings[team].GD = newGD; // Update goal difference
     standings[team].Pts = newPts; // Update 
-
+    standings[team].L = newL;
     // Save changes to localStorage
     localStorage.setItem("standings", JSON.stringify(standings));
 
