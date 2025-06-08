@@ -193,14 +193,14 @@ function handleEditTeam() {
     const newP = parseInt(document.getElementById("editP").value);
     const newGD = parseInt(document.getElementById("editGD").value);
     const newPts = parseInt(document.getElementById("editPts").value);
-    const L = parseInt(document.getElementById("editL").value); 
+    const newL = parseInt(document.getElementById("editL").value); 
 
     if (isNaN(newP) || isNaN(newGD) || isNaN(newPts) || isNaN(newL))) {
         alert("Please enter valid numbers for P, GD, L, and Pts.");
         return;
     }
 
-    editStandings(team, newP, newGD,newL, newPts);
+    editStandings(team, newP, newGD,newPts, newL);
 }
         function editStandings(team, newP, newGD, newPts, newL) {
     if (!standings[team]) {
