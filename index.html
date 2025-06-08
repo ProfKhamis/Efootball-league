@@ -202,7 +202,7 @@ function handleEditTeam() {
 
     editStandings(team, newP, newGD,newL, newPts);
 }
-        function editStandings(team, newP, newGD, newPts) {
+        function editStandings(team, newP, newGD, newPts, newL) {
     if (!standings[team]) {
         alert("Team not found in standings.");
         return;
@@ -221,17 +221,7 @@ function handleEditTeam() {
 
     alert(`Standings updated for ${team}`);
 }
-        document.getElementById("editTeam").addEventListener("change", function () {
-    const team = this.value;
-    if (standings[team]) {
-        document.getElementById("editP").value = standings[team].P;
-        document.getElementById("editW").value = standings[team].W;
-        document.getElementById("editD").value = standings[team].D;
-        document.getElementById("editL").value = standings[team].L;
-        document.getElementById("editGD").value = standings[team].GD;
-        document.getElementById("editPts").value = standings[team].Pts;
-    }
-});
+        
 
         function populateDropdowns() {
             let dropdowns = [document.getElementById("team1"), document.getElementById("team2"),document.getElementById("deleteTeam"), document.getElementById("editTeamDropdown")];
