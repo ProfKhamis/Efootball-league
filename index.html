@@ -156,7 +156,7 @@
 <label>Points (Pts):</label>
 <input type="number" id="editPts" min="0">
 <label>Losses (L) :</label>
-<input type="number" id="editL" placeholder="L">  <!-- ✅ Losses input -->
+<input type="number" id="editL">  <!-- ✅ Losses input -->
 <button onclick="handleEditTeam()">Edit Team Standings</button>
     
 <input type="text" id="newTeam" placeholder="New Team Name">
@@ -193,9 +193,10 @@ function handleEditTeam() {
     const newP = parseInt(document.getElementById("editP").value);
     const newGD = parseInt(document.getElementById("editGD").value);
     const newPts = parseInt(document.getElementById("editPts").value);
-
-    if (isNaN(newP) || isNaN(newGD) || isNaN(newPts)) {
-        alert("Please enter valid numbers for P, GD, Pts and L.");
+    const newL = parseInt(document.getElementById("editL").value);
+    
+    if (isNaN(newP) || isNaN(newGD) || isNaN(newPts)  || isNaN(newL)) {
+        alert("Please enter valid numbers for P, GD, L, and Pts.");
         return;
     }
 
