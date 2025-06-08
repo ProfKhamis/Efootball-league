@@ -193,16 +193,15 @@ function handleEditTeam() {
     const newP = parseInt(document.getElementById("editP").value);
     const newGD = parseInt(document.getElementById("editGD").value);
     const newPts = parseInt(document.getElementById("editPts").value);
-    const newL = parseInt(document.getElementById("editL").value); 
 
-    if (isNaN(newP) || isNaN(newGD) || isNaN(newPts) || isNaN(newL))) {
+    if (isNaN(newP) || isNaN(newGD) || isNaN(newPts)) {
         alert("Please enter valid numbers for P, GD, Pts and L.");
         return;
     }
 
     editStandings(team, newP, newGD,newPts, newL);
 }
-        function editStandings(team, newP, newGD, newPts, newL) {
+        function editStandings(team, newP, newGD, newPts) {
     if (!standings[team]) {
         alert("Team not found in standings.");
         return;
@@ -210,8 +209,7 @@ function handleEditTeam() {
 
     standings[team].P = newP;   // Update matches played
     standings[team].GD = newGD; // Update goal difference
-    standings[team].Pts = newPts; // Update points
-    standings[team].L = newL;       
+    standings[team].Pts = newPts; // Update 
 
     // Save changes to localStorage
     localStorage.setItem("standings", JSON.stringify(standings));
