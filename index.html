@@ -157,6 +157,8 @@
 <input type="number" id="editPts" min="0">
 <label>Losses (L) :</label>
 <input type="number" id="editL">  <!-- ✅ Losses input -->
+<label>Won (W)</label>
+<input type="number" id="editW">
 <button onclick="handleEditTeam()">Edit Team Standings</button>
     
 <input type="text" id="newTeam" placeholder="New Team Name">
@@ -194,15 +196,16 @@ function handleEditTeam() {
     const newGD = parseInt(document.getElementById("editGD").value);
     const newPts = parseInt(document.getElementById("editPts").value);
     const newL = parseInt(document.getElementById("editL").value);
+    const newW = parseInt(document.getElementById("editW").value);
     
-    if (isNaN(newP) || isNaN(newGD) || isNaN(newPts)  || isNaN(newL)) {
+    if (isNaN(newP) || isNaN(newGD) || isNaN(newPts)  || isNaN(newL) || isNaN(newW) ) {
         alert("Please enter valid numbers for P, GD, L, and Pts.");
         return;
     }
 
-    editStandings(team, newP, newGD,newPts, newL);
+    editStandings(team, newP, newGD,newPts, newL, newW);
 }
-        function editStandings(team, newP, newGD, newPts, newL) {
+        function editStandings(team, newP, newGD, newPts, newL, newW) {
     if (!standings[team]) {
         alert("Team not found in standings.");
         return;
@@ -212,7 +215,8 @@ function handleEditTeam() {
     standings[team].GD = newGD; // Update goal difference
     standings[team].Pts = newPts; // Update 
     standings[team].L = newL;
-    // Save changes to localStorage
+    standings[team].W = newW;
+    // Save all changes to localStorage
     localStorage.setItem("standings", JSON.stringify(standings));
 
     // Refresh the tables
