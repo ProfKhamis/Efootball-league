@@ -147,7 +147,16 @@
     <input type="number" id="team2Score">
 
     <button onclick="updateScores()">Submit Score</button>
-    <h2>Manage Teams</h2>
+    <h2>Manage Teams</h2><h2>Edit Team Standings</h2>
+<select id="editTeamDropdown"></select>
+<label>Matches Played (P):</label>
+<input type="number" id="editP" min="0">
+<label>Goal Difference (GD):</label>
+<input type="number" id="editGD" min="-100">
+<label>Points (Pts):</label>
+<input type="number" id="editPts" min="0">
+<button onclick="handleEditTeam()">Edit Team Standings</button>
+    
 <input type="text" id="newTeam" placeholder="New Team Name">
 <button onclick="addTeam()">Add Team</button>
 
@@ -177,7 +186,19 @@
                 Object.values(standings[team]).forEach(stat => row.insertCell().innerText = stat);
             });
         }
+function handleEditTeam() {
+    const team = document.getElementById("editTeamDropdown").value;
+    const newP = parseInt(document.getElementById("editP").value);
+    const newGD = parseInt(document.getElementById("editGD").value);
+    const newPts = parseInt(document.getElementById("editPts").value);
 
+    if (isNaN(newP) || isNaN(newGD) || isNaN(newPts)) {
+        alert("Please enter valid numbers for P, GD, and Pts.");
+        return;
+    }
+
+    editStandings(team, newP, newGD, newPts);
+}
         function editStandings(team, newP, newGD, newPts) {
     if (!standings[team]) {
         alert("Team not found in standings.");
@@ -198,7 +219,7 @@
 }
 
         function populateDropdowns() {
-            let dropdowns = [document.getElementById("team1"), document.getElementById("team2"),document.getElementById("deleteTeam")];
+            let dropdowns = [document.getElementById("team1"), document.getElementById("team2"),document.getElementById("deleteTeam"), document.getElementById("editTeamDropdown")];
             dropdowns.forEach(dropdown => dropdown.innerHTML = "");
             [...groupA].forEach(team => {
                 dropdowns.forEach(dropdown => {
