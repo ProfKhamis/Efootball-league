@@ -155,6 +155,8 @@
 <input type="number" id="editGD" min="-100">
 <label>Points (Pts):</label>
 <input type="number" id="editPts" min="0">
+<label>Losses (L) :</label>
+<input type="number" id="editL" placeholder="L">  <!-- ✅ Losses input -->
 <button onclick="handleEditTeam()">Edit Team Standings</button>
     
 <input type="text" id="newTeam" placeholder="New Team Name">
@@ -191,13 +193,14 @@ function handleEditTeam() {
     const newP = parseInt(document.getElementById("editP").value);
     const newGD = parseInt(document.getElementById("editGD").value);
     const newPts = parseInt(document.getElementById("editPts").value);
+    const L = parseInt(document.getElementById("editL").value); 
 
-    if (isNaN(newP) || isNaN(newGD) || isNaN(newPts)) {
-        alert("Please enter valid numbers for P, GD, and Pts.");
+    if (isNaN(newP) || isNaN(newGD) || isNaN(newPts) || isNaN(newL))) {
+        alert("Please enter valid numbers for P, GD, L, and Pts.");
         return;
     }
 
-    editStandings(team, newP, newGD, newPts);
+    editStandings(team, newP, newGD,newL, newPts);
 }
         function editStandings(team, newP, newGD, newPts) {
     if (!standings[team]) {
@@ -208,6 +211,7 @@ function handleEditTeam() {
     standings[team].P = newP;   // Update matches played
     standings[team].GD = newGD; // Update goal difference
     standings[team].Pts = newPts; // Update points
+    standings[team].L = newL;       
 
     // Save changes to localStorage
     localStorage.setItem("standings", JSON.stringify(standings));
@@ -217,6 +221,17 @@ function handleEditTeam() {
 
     alert(`Standings updated for ${team}`);
 }
+        document.getElementById("editTeam").addEventListener("change", function () {
+    const team = this.value;
+    if (standings[team]) {
+        document.getElementById("editP").value = standings[team].P;
+        document.getElementById("editW").value = standings[team].W;
+        document.getElementById("editD").value = standings[team].D;
+        document.getElementById("editL").value = standings[team].L;
+        document.getElementById("editGD").value = standings[team].GD;
+        document.getElementById("editPts").value = standings[team].Pts;
+    }
+});
 
         function populateDropdowns() {
             let dropdowns = [document.getElementById("team1"), document.getElementById("team2"),document.getElementById("deleteTeam"), document.getElementById("editTeamDropdown")];
