@@ -150,7 +150,11 @@
             background-color: #f8d7da; /* Light red */
             font-weight: bold;
         }
-
+        .top-rank-highlight {
+            background-color: #ffeb3b; /* A standard yellowish color */
+            font-weight: bold;
+            color: #333; /* Ensure text is readable */
+        }
         /* Prize Banner (if kept) */
         .prize-banner {
             width: 100%;
@@ -568,10 +572,14 @@
             [premierTable, champTable].forEach(table => {
                 Array.from(table.rows).forEach((row, index) => {
                     if (index > 0) { // Skip header row
-                        row.classList.remove('promotion', 'relegation');
+                        row.classList.remove('promotion', 'relegation', 'top-rank-highlight');
                     }
                 });
             });
+                     // Apply rank 1 highlight for Premier Showdown
+            if (premierTable.rows.length > 1) { // Ensure there's at least one team row
+                premierTable.rows[1].classList.add('top-rank-highlight'); // Highlight the first team (index 1 because index 0 is header)
+            }
 
             if (initialSplitDone) {
                 // Highlight top 5 of Championship (promotion) - For subsequent seasons
