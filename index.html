@@ -3,233 +3,499 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>League Group Stage</title>
+    <title>eFootball League Management</title>
     <style>
+        /* Universal Box-Sizing for easier layout */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             text-align: center;
-            padding: 20px;
+            padding: 10px; /* Reduced padding for smaller screens */
+            margin: 0; /* Remove default body margin */
+            font-size: 16px; /* Base font size */
         }
-        .match-entry {
+
+        h2 {
+            color: #333;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-size: 1.8em; /* Responsive font size */
+        }
+
+        /* Match Entry and Management Sections */
+        .match-entry, .management-section {
             background: #f9f9f9;
-            padding: 20px;
+            padding: 15px; /* Adjusted padding */
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            margin: 20px auto;
+            max-width: 600px; /* Increased max-width for better desktop look */
+            margin: 15px auto; /* Adjusted margin */
+            display: flex; /* Use flexbox for internal layout */
+            flex-direction: column; /* Stack items vertically */
+            gap: 10px; /* Space between elements */
         }
-        .match-entry label {
+
+        .match-entry label, .management-section label {
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 0px; /* Remove extra margin, handled by gap */
             display: block;
             color: #333;
+            text-align: left; /* Align labels to the left */
         }
-        .match-entry select, .match-entry input {
-            width: 100%;
+
+        .match-entry select,
+        .match-entry input[type="number"],
+        .management-section select,
+        .management-section input[type="text"],
+        .management-section input[type="number"] {
+            width: 100%; /* Full width within their container */
             padding: 10px;
-            margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 1em; /* Responsive font size */
+            -webkit-appearance: none; /* Remove default styling for selects/inputs */
+            -moz-appearance: none;
+            appearance: none;
         }
-        .match-entry button {
-            width: 100%;
+
+        .match-entry button,
+        .management-section button {
+            width: 100%; /* Full width */
             padding: 12px;
             border: none;
             background: #007bff;
             color: white;
-            font-size: 16px;
+            font-size: 1em; /* Responsive font size */
             border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s ease; /* Smooth hover effect */
         }
-        .match-entry button:disabled {
+
+        .match-entry button:hover,
+        .management-section button:hover {
+            background-color: #0056b3;
+        }
+
+        .match-entry button:disabled,
+        .management-section button:disabled {
             background: #ccc;
             cursor: not-allowed;
         }
-        @keyframes marquee {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
-}
-    .prize-banner {
-        width: 100%;
-        overflow: hidden;
-        white-space: nowrap;
-        background: #007bff;
-        color: white;
-        font-size: 18px;
-        padding: 10px 0;
-        position: relative;
-    }
-    .prize-banner span {
-        display: inline-block;
-        animation: marquee 10s linear infinite;
-    }
+
+        /* Table Container for Responsiveness */
+        .table-responsive {
+            width: 95%; /* Flexible width for the container */
+            max-width: 1200px; /* Max width for large screens */
+            margin: 20px auto;
+            overflow-x: auto; /* Enable horizontal scrolling for narrow tables */
+            background: white; /* Match table background */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Match table shadow */
+            border-radius: 10px; /* Match table border-radius if desired */
+        }
 
         table {
-            width: 80%;
-            margin: 20px auto;
+            width: 100%; /* Table takes 100% of its container */
             border-collapse: collapse;
-            background: white;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            font-size: 0.9em; /* Slightly smaller base font for tables */
         }
-        th, td {
-            border: 1px solid black;
-            padding: 10px;
+
+        table th, table td {
+            border: 1px solid #ddd; /* Lighter border */
+            padding: 8px; /* Adjusted padding */
             text-align: center;
+            vertical-align: middle; /* Center content vertically */
+            white-space: nowrap; /* Prevent text wrapping within cells by default */
         }
-        th {
+        
+        /* Specific column widths to prevent squishing */
+        table th:nth-child(1), table td:nth-child(1) { /* Rank */
+            min-width: 40px; 
+            width: 5%;
+        }
+        table th:nth-child(2), table td:nth-child(2) { /* Team Name */
+            min-width: 150px; /* Ensure enough space for longer team names */
+            text-align: left; /* Align team names to the left */
+            padding-left: 15px; /* Little extra padding */
+            width: 40%; /* More generous width */
+            white-space: normal; /* Allow team names to wrap */
+        }
+        table th:nth-child(n+3), table td:nth-child(n+3) { /* All stat columns (P, W, D, L, GF, GA, GD, Pts) */
+            min-width: 50px; /* Minimum width for numbers */
+            width: 7%; /* Distribute remaining width */
+        }
+
+
+        table th {
             background-color: #007bff;
             color: white;
+            font-weight: bold;
+            position: sticky; /* Make header sticky for scrolling */
+            top: 0;
+            z-index: 1; /* Ensure header is above content */
         }
+        
+        /* Table row highlighting */
         .highlight {
             background-color: #ffdd57;
         }
-        select, input, button {
-            margin: 5px;
-            padding: 8px;
-            font-size: 16px;
-        }
-        .timer-container {
-            background-color: #ffcc00;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 24px;
+        .promotion {
+            background-color: #d4edda; /* Light green */
             font-weight: bold;
+        }
+        .relegation {
+            background-color: #f8d7da; /* Light red */
+            font-weight: bold;
+        }
+
+        /* Prize Banner (if kept) */
+        .prize-banner {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            background: #007bff;
+            color: white;
+            font-size: 1.1em;
+            padding: 10px 0;
+            position: relative;
+        }
+        .prize-banner span {
             display: inline-block;
+            animation: marquee 10s linear infinite;
         }
-        .announcement {
-            position: absolute;
-            font-size: 24px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
+
+        /* Flex container for buttons at the bottom */
+        .season-actions {
+            display: flex;
+            flex-wrap: wrap; /* Allow items to wrap to next line */
+            justify-content: center; /* Center buttons */
+            gap: 10px; /* Space between buttons */
+            margin: 20px auto;
+            max-width: 600px;
         }
-        @media (max-width: 600px) {
-    table {
-        width: 100%;
-        font-size: 12px;
-    }
 
-    .match-entry, input, select, button {
-        width: 100% !important;
-        font-size: 14px;
-    }
+        .season-actions select, .season-actions button {
+            flex-basis: 100%; /* Take full width on small screens */
+            max-width: 300px; /* Limit width on larger screens */
+        }
+        .season-actions label {
+            flex-basis: 100%;
+            text-align: left;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
 
-    .prize-banner {
-        font-size: 14px;
-    }
 
-    h2 {
-        font-size: 20px;
-    }
-}
+        /* Media Queries for different screen sizes */
+
+        /* Small screens (e.g., phones in portrait) */
+        @media (max-width: 480px) {
+            body {
+                font-size: 14px;
+                padding: 5px;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+            .match-entry, .management-section {
+                padding: 10px;
+                margin: 10px auto;
+            }
+            /* Table container on small screens */
+            .table-responsive {
+                width: 98%;
+                margin: 10px auto;
+            }
+            table {
+                font-size: 0.75em; /* Smaller font for tables on very small screens */
+            }
+            table th, table td {
+                padding: 6px;
+            }
+            .prize-banner {
+                font-size: 0.9em;
+            }
+        }
+
+        /* Medium screens (e.g., tablets, larger phones) */
+        @media (min-width: 481px) and (max-width: 768px) {
+            body {
+                font-size: 15px;
+            }
+            h2 {
+                font-size: 1.7em;
+            }
+            .match-entry, .management-section {
+                max-width: 550px;
+            }
+            table {
+                font-size: 0.85em;
+            }
+        }
+
+        /* Large screens (desktops) */
+        @media (min-width: 769px) {
+            body {
+                font-size: 16px;
+            }
+            h2 {
+                font-size: 2em;
+            }
+            .match-entry, .management-section {
+                flex-direction: row; /* Layout inputs side-by-side */
+                flex-wrap: wrap; /* Allow wrapping */
+                justify-content: space-between; /* Distribute space */
+                align-items: flex-end; /* Align inputs/buttons at the bottom */
+            }
+            .match-entry label, .management-section label {
+                flex-basis: 100%; /* Labels take full width */
+                margin-bottom: 5px;
+            }
+            .match-entry select,
+            .match-entry input[type="number"],
+            .management-section select,
+            .management-section input[type="text"],
+            .management-section input[type="number"] {
+                flex: 1; /* Allow inputs to grow */
+                min-width: 150px; /* Minimum width for inputs */
+            }
+            .match-entry button,
+            .management-section button {
+                flex-basis: auto; /* Buttons adjust their width */
+                width: auto;
+                min-width: 150px;
+                margin-left: 10px;
+            }
+            .match-entry > div { /* Wrapper for team 1/2 score pairs */
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                margin-right: 10px; /* Space between team entries */
+            }
+            .match-entry div:last-of-type {
+                margin-right: 0;
+            }
+
+            /* Specific adjustments for "Edit Team Standings" */
+            .management-section.edit-team-section {
+                flex-direction: row; /* Keep elements in a row */
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                align-items: center;
+            }
+            .management-section.edit-team-section label,
+            .management-section.edit-team-section select,
+            .management-section.edit-team-section input {
+                flex-basis: auto; /* Let items size content */
+                width: auto;
+                min-width: unset;
+                margin-right: 10px;
+            }
+            .management-section.edit-team-section button {
+                flex-basis: auto;
+                width: auto;
+                margin-left: 0;
+            }
+
+            .season-actions {
+                flex-wrap: nowrap; /* Prevent wrapping on large screens */
+                justify-content: space-around; /* Spread buttons out */
+            }
+            .season-actions select, .season-actions button {
+                flex-basis: auto; /* Adjust width dynamically */
+                width: auto;
+                max-width: unset;
+            }
+        }
     </style>
 </head>
 <body>
     
     <h2>Efootball Premier Showdown</h2>
-    <table id="groupA"></table>
-    
+    <div class="table-responsive">
+        <table id="premierShowdownTable"></table>
+    </div>
 
+    <div id="championshipSection" style="display: none;">
+        <h2>Efootball Championship</h2>
+        <div class="table-responsive">
+            <table id="efootballChampionshipTable"></table>
+        </div>
+    </div>
+
+    ---
 
     <h2>Enter Match Results</h2>
-    <label for="team1">Team 1:</label>
-    <select id="team1"></select>
-    <label for="team1Score">Score:</label>
-    <input type="number" id="team1Score">
+    <div class="match-entry">
+        <div>
+            <label for="team1">Team 1:</label>
+            <select id="team1"></select>
+        </div>
+        <div>
+            <label for="team1Score">Score:</label>
+            <input type="number" id="team1Score">
+        </div>
 
-    <label for="team2">Team 2:</label>
-    <select id="team2"></select>
-    <label for="team2Score">Score:</label>
-    <input type="number" id="team2Score">
+        <div>
+            <label for="team2">Team 2:</label>
+            <select id="team2"></select>
+        </div>
+        <div>
+            <label for="team2Score">Score:</label>
+            <input type="number" id="team2Score">
+        </div>
 
-    <button onclick="updateScores()">Submit Score</button>
-    <h2>Manage Teams</h2><h2>Edit Team Standings</h2>
-<select id="editTeamDropdown"></select>
-<label>Matches Played (P):</label>
-<input type="number" id="editP" min="0">
-<label>Goal Difference (GD):</label>
-<input type="number" id="editGD" min="-100">
-<label>Points (Pts):</label>
-<input type="number" id="editPts" min="0">
-<label>Losses (L) :</label>
-<input type="number" id="editL">  <!-- ✅ Losses input -->
-<label>Won (W)</label>
-<input type="number" id="editW">
-<button onclick="handleEditTeam()">Edit Team Standings</button>
+        <button onclick="updateScores()">Submit Score</button>
+    </div>
+
+    ---
+
+    <h2>Manage Teams</h2>
+    <div class="management-section edit-team-section">
+        <h3>Edit Team Standings</h3>
+        <select id="editTeamDropdown"></select>
+        <label>Matches Played (P):</label>
+        <input type="number" id="editP" min="0">
+        <label>Goal Difference (GD):</label>
+        <input type="number" id="editGD" min="-100">
+        <label>Points (Pts):</label>
+        <input type="number" id="editPts" min="0">
+        <label>Losses (L) :</label>
+        <input type="number" id="editL">
+        <label>Won (W)</label>
+        <input type="number" id="editW">
+        <button onclick="handleEditTeam()">Edit Team Standings</button>
+    </div>
+
+    <div class="management-section">
+        <input type="text" id="newTeam" placeholder="New Team Name">
+        <button onclick="addTeam()">Add Team</button>
+    </div>
     
-<input type="text" id="newTeam" placeholder="New Team Name">
-<button onclick="addTeam()">Add Team</button>
+    <div class="management-section">
+        <select id="deleteTeam"></select>
+        <button onclick="deleteTeam()">Delete Selected Team</button>
+    </div>
 
-<select id="deleteTeam"></select>
-<button onclick="deleteTeam()">Delete Selected Team</button>
-     
+    ---
 
+    <h2>Season Actions</h2>
+    <div class="season-actions">
+        <label for="resetTeam">Select Team to Reset:</label>
+        <select id="resetTeam"></select>
+        <button onclick="resetTeamStandings()">Reset Team Standings</button>
+        <button onclick="resetAllStandings()">Reset All Standings</button>
+        <button onclick="promoteRelegate()">End Season & Promote/Relegate</button>
+    </div>
 
     <script>
-        
-        let groupA = [
-             "MR DESTRUCTOR", "DIAZ", "MEGADOLLA","KEN", "HAVE MERCY", "ALLAN FC", "SANTOS", "TIKITAKA FCB", "LEGEND KILLER", 
-            "LIVERPOOL", "GALATASARAY", "RED BULL", "SLAYER", "MOON", "BARCELONA", "MNYONGE WAKO", "DÈMØLÎẞHÈR", "MACKON-LON",
-            "LEFTFOOTMAGIC", "FELIXG3"
-        ];
+        // Use a flag to track if the initial split has occurred
+        // IMPORTANT: If you want to force a reset and start over, set this to false in localStorage.
+        let initialSplitDone = JSON.parse(localStorage.getItem("initialSplitDone"));
+        if (initialSplitDone === null) { // Only initialize if it doesn't exist
+            initialSplitDone = false;
+        }
+
+        // Initialize teams from localStorage. If not found, use the default 20.
+        // If initialSplitDone is false, championshipTeams will be empty.
+        // If initialSplitDone is true, premierShowdownTeams and championshipTeams will be 10 each.
+        let premierShowdownTeams = JSON.parse(localStorage.getItem("premierShowdownTeams"));
+        let championshipTeams = JSON.parse(localStorage.getItem("championshipTeams"));
+
+        // If no teams are stored (first load or cleared localStorage), initialize the 20-team league
+        if (!premierShowdownTeams && !championshipTeams) {
+            premierShowdownTeams = [
+                "MR DESTRUCTOR", "DIAZ", "MEGADOLLA", "KEN", "HAVE MERCY", "ALLAN FC", "SANTOS", "TIKITAKA FCB", "LEGEND KILLER", 
+                "LIVERPOOL", "GALATASARAY", "RED BULL", "SLAYER", "MOON", "BARCELONA", "MNYONGE WAKO", "DÈMØLÎẞHÈR", "MACKON-LON",
+                "LEFTFOOTMAGIC", "FELIXG3"
+            ];
+            championshipTeams = []; // Ensure championship is explicitly empty initially
+            localStorage.setItem("premierShowdownTeams", JSON.stringify(premierShowdownTeams));
+            localStorage.setItem("championshipTeams", JSON.stringify(championshipTeams));
+            // initialSplitDone already handled by the first `let initialSplitDone = ...`
+        }
 
         let standings = JSON.parse(localStorage.getItem("standings")) || {};
-        localStorage.setItem("groupA", JSON.stringify(groupA));
+
+        // Initialize standings for all teams if they don't exist
+        function initializeStandings(teams) {
+            teams.forEach(team => {
+                if (!standings[team]) {
+                    standings[team] = { P: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0, GD: 0, Pts: 0 };
+                }
+            });
+            localStorage.setItem("standings", JSON.stringify(standings));
+        }
+
+        // Call initializeStandings for both arrays to ensure all tracked teams have entries
+        initializeStandings(premierShowdownTeams);
+        initializeStandings(championshipTeams);
 
         function initializeTable(group, tableId) {
             let table = document.getElementById(tableId);
-            table.innerHTML = `<tr><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>`;
-            group.forEach(team => {
-                if (!standings[team]) standings[team] = {P: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0, GD: 0, Pts: 0};
+            table.innerHTML = `<tr><th>Rank</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>`;
+            
+            // Sort using UEFA-style rules: Pts → GD → GF → A-Z (Team Name)
+            group.sort((a, b) => 
+                standings[b].Pts - standings[a].Pts || 
+                standings[b].GD - standings[a].GD || 
+                standings[b].GF - standings[a].GF ||
+                a.localeCompare(b) 
+            );
+
+            group.forEach((team, index) => {
                 let row = table.insertRow();
-                row.insertCell(0).innerText = team;
+                row.insertCell(0).innerText = index + 1; // Rank number
+                row.insertCell(1).innerText = team;
                 Object.values(standings[team]).forEach(stat => row.insertCell().innerText = stat);
             });
         }
-function handleEditTeam() {
-    const team = document.getElementById("editTeamDropdown").value;
-    const newP = parseInt(document.getElementById("editP").value);
-    const newGD = parseInt(document.getElementById("editGD").value);
-    const newPts = parseInt(document.getElementById("editPts").value);
-    const newL = parseInt(document.getElementById("editL").value);
-    const newW = parseInt(document.getElementById("editW").value);
-    
-    if (isNaN(newP) || isNaN(newGD) || isNaN(newPts)  || isNaN(newL) || isNaN(newW) ) {
-        alert("Please enter valid numbers for P, GD, L, and Pts.");
-        return;
-    }
 
-    editStandings(team, newP, newGD,newPts, newL, newW);
-}
+        function handleEditTeam() {
+            const team = document.getElementById("editTeamDropdown").value;
+            const newP = parseInt(document.getElementById("editP").value);
+            const newGD = parseInt(document.getElementById("editGD").value);
+            const newPts = parseInt(document.getElementById("editPts").value);
+            const newL = parseInt(document.getElementById("editL").value);
+            const newW = parseInt(document.getElementById("editW").value);
+            
+            if (isNaN(newP) || isNaN(newGD) || isNaN(newPts) || isNaN(newL) || isNaN(newW) ) {
+                alert("Please enter valid numbers for P, GD, L, W, and Pts.");
+                return;
+            }
+
+            editStandings(team, newP, newGD, newPts, newL, newW);
+        }
+
         function editStandings(team, newP, newGD, newPts, newL, newW) {
-    if (!standings[team]) {
-        alert("Team not found in standings.");
-        return;
-    }
+            if (!standings[team]) {
+                alert("Team not found in standings.");
+                return;
+            }
 
-    standings[team].P = newP;   // Update matches played
-    standings[team].GD = newGD; // Update goal difference
-    standings[team].Pts = newPts; // Update 
-    standings[team].L = newL;
-    standings[team].W = newW;
-    // Save all changes to localStorage
-    localStorage.setItem("standings", JSON.stringify(standings));
-
-    // Refresh the tables
-    renderTables();
-
-    alert(`Standings updated for ${team}`);
-}
-        
-
+            standings[team].P = newP;
+            standings[team].GD = newGD;
+            standings[team].Pts = newPts;
+            standings[team].L = newL;
+            standings[team].W = newW;
+            
+            localStorage.setItem("standings", JSON.stringify(standings));
+            renderTables();
+            alert(`Standings updated for ${team}`);
+        }
+                
         function populateDropdowns() {
-            let dropdowns = [document.getElementById("team1"), document.getElementById("team2"),document.getElementById("deleteTeam"), document.getElementById("editTeamDropdown")];
+            let allTeams = [...premierShowdownTeams, ...championshipTeams];
+            // Ensure unique teams in case of temporary duplicates (e.g. during transition)
+            allTeams = [...new Set(allTeams)]; 
+
+            let dropdowns = [document.getElementById("team1"), document.getElementById("team2"), document.getElementById("deleteTeam"), document.getElementById("editTeamDropdown")];
             dropdowns.forEach(dropdown => dropdown.innerHTML = "");
-            [...groupA].forEach(team => {
+            allTeams.forEach(team => {
                 dropdowns.forEach(dropdown => {
                     let option = document.createElement("option");
                     option.value = team;
@@ -238,230 +504,313 @@ function handleEditTeam() {
                 });
             });
         }
-        function validateSelection() {
-            let team1 = document.getElementById("team1").value;
-            let team2 = document.getElementById("team2").value;
-            document.getElementById("submitBtn").disabled = team1 === team2;
-        }
+
         function updateScores() {
-    let team1 = document.getElementById("team1").value.trim();
-    let team2 = document.getElementById("team2").value.trim();
-    let score1 = parseInt(document.getElementById("team1Score").value);
-    let score2 = parseInt(document.getElementById("team2Score").value);
+            let team1 = document.getElementById("team1").value.trim();
+            let team2 = document.getElementById("team2").value.trim();
+            let score1 = parseInt(document.getElementById("team1Score").value);
+            let score2 = parseInt(document.getElementById("team2Score").value);
 
-    // Validate inputs
-    if (!standings[team1] || !standings[team2] || team1 === team2 || isNaN(score1) || isNaN(score2) || score1 < 0 || score2 < 0) {
-        alert("Invalid input. Make sure teams exist, are different, and scores are valid.");
-        return;
-    }
+            if (!standings[team1] || !standings[team2] || team1 === team2 || isNaN(score1) || isNaN(score2) || score1 < 0 || score2 < 0) {
+                alert("Invalid input. Make sure teams exist, are different, and scores are valid.");
+                return;
+            }
 
-    // Update match stats
-    standings[team1].P += 1;
-    standings[team2].P += 1;
-    standings[team1].GF += score1;
-    standings[team2].GF += score2;
-    standings[team1].GA += score2;
-    standings[team2].GA += score1;
+            standings[team1].P += 1;
+            standings[team2].P += 1;
+            standings[team1].GF += score1;
+            standings[team2].GF += score2;
+            standings[team1].GA += score2;
+            standings[team2].GA += score1;
 
-    // Determine match outcome
-    if (score1 > score2) {
-        standings[team1].W += 1;
-        standings[team2].L += 1;
-        standings[team1].Pts += 3;
-    } else if (score1 < score2) {
-        standings[team2].W += 1;
-        standings[team1].L += 1;
-        standings[team2].Pts += 3;
-    } else {
-        standings[team1].D += 1;
-        standings[team2].D += 1;
-        standings[team1].Pts += 1;
-        standings[team2].Pts += 1;
-    }
+            if (score1 > score2) {
+                standings[team1].W += 1;
+                standings[team2].L += 1;
+                standings[team1].Pts += 3;
+            } else if (score1 < score2) {
+                standings[team2].W += 1;
+                standings[team1].L += 1;
+                standings[team2].Pts += 3;
+            } else {
+                standings[team1].D += 1;
+                standings[team2].D += 1;
+                standings[team1].Pts += 1;
+                standings[team2].Pts += 1;
+            }
 
-    // Recalculate goal difference (GD) after all updates
-    standings[team1].GD = standings[team1].GF - standings[team1].GA;
-    standings[team2].GD = standings[team2].GF - standings[team2].GA;
+            standings[team1].GD = standings[team1].GF - standings[team1].GA;
+            standings[team2].GD = standings[team2].GF - standings[team2].GA;
 
-    // **SAVE TO LOCAL STORAGE**
-    localStorage.setItem("standings", JSON.stringify(standings));
+            localStorage.setItem("standings", JSON.stringify(standings));
+            renderTables();
+        }
 
-    // Refresh display
-    renderTables();
-}
+        function renderTables() {
+            // Show/hide championship section based on initialSplitDone
+            const championshipSection = document.getElementById("championshipSection");
+            if (initialSplitDone) {
+                championshipSection.style.display = 'block'; // Or 'flex' if you style it with flexbox
+                initializeTable(premierShowdownTeams, "premierShowdownTable");
+                initializeTable(championshipTeams, "efootballChampionshipTable");
+            } else {
+                championshipSection.style.display = 'none';
+                initializeTable(premierShowdownTeams, "premierShowdownTable"); // Still show the 20 teams in Premier Showdown
+            }
+            applyPromotionRelegationHighlighting(); // Apply highlighting after rendering
+        }
 
+        // Function to apply styling for promotion and relegation
+        function applyPromotionRelegationHighlighting() {
+            const premierTable = document.getElementById("premierShowdownTable");
+            const champTable = document.getElementById("efootballChampionshipTable");
 
+            // Clear previous highlighting
+            [premierTable, champTable].forEach(table => {
+                Array.from(table.rows).forEach((row, index) => {
+                    if (index > 0) { // Skip header row
+                        row.classList.remove('promotion', 'relegation');
+                    }
+                });
+            });
 
-function renderTables() {
-    updateTable("groupA", groupA);
-}
+            if (initialSplitDone) {
+                // Highlight top 5 of Championship (promotion) - For subsequent seasons
+                for (let i = 1; i <= 5; i++) { // Skip header row
+                    if (champTable.rows[i]) {
+                        champTable.rows[i].classList.add('promotion');
+                    }
+                }
 
-window.onload = function() {
-    // Load standings from localStorage or initialize as an empty object
-    standings = JSON.parse(localStorage.getItem("standings")) || {};
-
-    // Ensure groups exist before initializing tables
-    if (typeof groupA !== "undefined") initializeTable(groupA, "groupA");
-    // Populate dropdowns if function exists
-    if (typeof populateDropdowns === "function") {
-        populateDropdowns();
-    }
-
-    // Render tables to display standings
-    if (typeof renderTables === "function") {
-        renderTables();
-    }
-};
-
-function addTeam() {
-    const team = document.getElementById("newTeam").value.trim();
-    if (!team) {
-        alert("Enter a team name.");
-        return;
-    }
-    if (groupA.includes(team)) {
-        alert("Team already exists.");
-        return;
-    }
-    groupA.push(team);
-    standings[team] = { P: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0, GD: 0, Pts: 0 };
-
-    localStorage.setItem("groupA", JSON.stringify(groupA));
-localStorage.setItem("standings", JSON.stringify(standings));
-    
-    populateDropdowns();
-    populateResetDropdown();
-    document.getElementById("newTeam").value = "";
-    renderTables();
-}
-
-function deleteTeam() {
-    const team = document.getElementById("deleteTeam").value;
-    if (!confirm(`Are you sure you want to delete ${team}?`)) return;
-
-    groupA = groupA.filter(t => t !== team);
-    delete standings[team];
-
-    localStorage.setItem("groupA", JSON.stringify(groupA));
-    localStorage.setItem("standings", JSON.stringify(standings));
-
-    populateDropdowns();
-    populateResetDropdown();
-    renderTables();
-}
-
-function updateTable(tableId, group) {
-    let table = document.getElementById(tableId);
-    table.innerHTML = `<tr><th>Rank</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>`;
-
-    // Sort using UEFA-style rules: Pts → GD → GF → A-Z (Team Name)
-    group.sort((a, b) => 
-        standings[b].Pts - standings[a].Pts || 
-        standings[b].GD - standings[a].GD || 
-        standings[b].GF - standings[a].GF ||
-        a.localeCompare(b)  // Alphabetical order if all are tied
-    );
-
-    group.forEach((team, index) => {
-        let row = table.insertRow();
-        row.insertCell(0).innerText = index + 1; // Rank number
-        row.insertCell(1).innerText = team;
-        Object.values(standings[team]).forEach(stat => row.insertCell().innerText = stat);
-
-        if (index === 0) row.classList.add("highlight");
-    });
-}
-function resetTeamStandings() {
-    let team = document.getElementById("resetTeam").value;
-    if (!standings[team]) {
-        alert("Team not found!");
-        return;
-    }
-
-    // Reset stats for the selected team
-    standings[team] = { P: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0, GD: 0, Pts: 0 };
-    
-    // Save to localStorage
-    localStorage.setItem("standings", JSON.stringify(standings));
-
-    // Refresh table
-    renderTables();
-
-    alert(`${team} standings have been reset.`);
-}
-
-// Populate reset dropdown
-function populateResetDropdown() {
-    let dropdown = document.getElementById("resetTeam");
-    dropdown.innerHTML = "";
-    groupA.forEach(team => {
-        let option = document.createElement("option");
-        option.value = team;
-        option.innerText = team;
-        dropdown.appendChild(option);
-    });
-}
-
-function updateKnockoutTable() {
-    let knockoutTable = document.getElementById("knockoutStage");
-    knockoutTable.innerHTML = `<tr><th>Rank</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>`;
-
-    let qualifiedTeams = [];
-
-    // Function to get the top 2 teams from a group using UEFA ranking criteria
-    function getTopTeams(group) {
-        return [...group].sort((a, b) => 
-            standings[b].Pts - standings[a].Pts ||  // Higher Points
-            standings[b].GD - standings[a].GD ||    // Higher Goal Difference
-            standings[b].GF - standings[a].GF ||    // Higher Goals For
-            standings[a].GA - standings[b].GA ||    // Lower Goals Against
-            a.localeCompare(b)                      // Alphabetical Order
-        ).slice(0, 2);  // Take the top 2 teams
-    }
-
-    // Get top 2 teams from each group
-    let groupAQualified = getTopTeams(groupA);
-    let groupBQualified = getTopTeams(groupB);
-    let groupCQualified = getTopTeams(groupC);
-    let groupDQualified = getTopTeams(groupD);
-
-    // Maintain correct order by keeping group integrity
-    qualifiedTeams = [...groupAQualified, ...groupBQualified, ...groupCQualified, ...groupDQualified];
-
-    // **Final Sorting for Display**
-    qualifiedTeams.sort((a, b) => 
-        standings[b].Pts - standings[a].Pts ||  // Higher Points
-        standings[b].GD - standings[a].GD ||    // Higher Goal Difference
-        standings[b].GF - standings[a].GF ||    // Higher Goals For
-        standings[a].GA - standings[b].GA ||    // Lower Goals Against
-        a.localeCompare(b)                      // Alphabetical Order
-    );
-
-    // Display qualified teams in the knockout table
-    qualifiedTeams.forEach((team, index) => {
-        let row = knockoutTable.insertRow();
-        row.insertCell(0).innerText = index + 1; // Rank
-        row.insertCell(1).innerText = team;
-        Object.values(standings[team]).forEach(stat => row.insertCell().innerText = stat);
-    });
-}
+                // Highlight bottom 5 of Premier Showdown (relegation) - For subsequent seasons
+                const premierRowCount = premierTable.rows.length;
+                for (let i = 1; i <= 5; i++) {
+                    if (premierTable.rows[premierRowCount - i]) {
+                        premierTable.rows[premierRowCount - i].classList.add('relegation');
+                    }
+                }
+            } else {
+                // Highlighting for the initial 20-team split
+                // Top 10 remain in Premier Showdown
+                // Bottom 10 move to Championship
+                const premierRowCount = premierTable.rows.length; // Will be 20 for initial season
+                if (premierRowCount > 1) { // Ensure there are rows beyond the header
+                    for (let i = 11; i <= 20 && i < premierRowCount; i++) { // Teams from rank 11 to 20 are "relegated" to Championship
+                        if (premierTable.rows[i]) {
+                            premierTable.rows[i].classList.add('relegation');
+                        }
+                    }
+                }
+            }
+        }
 
 
+        window.onload = function() {
+            // Retrieve values from localStorage first
+            initialSplitDone = JSON.parse(localStorage.getItem("initialSplitDone"));
+            if (initialSplitDone === null) { // If it's truly not set, then it's the very first load
+                initialSplitDone = false; // Default to false for the initial 20-team season
+                localStorage.setItem("initialSplitDone", JSON.stringify(initialSplitDone));
+            }
+
+            premierShowdownTeams = JSON.parse(localStorage.getItem("premierShowdownTeams"));
+            championshipTeams = JSON.parse(localStorage.getItem("championshipTeams"));
+            standings = JSON.parse(localStorage.getItem("standings")) || {};
+
+            // If no teams are stored in localStorage, initialize them
+            if (!premierShowdownTeams || (initialSplitDone === false && premierShowdownTeams.length === 0)) {
+                premierShowdownTeams = [
+                    "MR DESTRUCTOR", "DIAZ", "MEGADOLLA", "KEN", "HAVE MERCY", "ALLAN FC", "SANTOS", "TIKITAKA FCB", "LEGEND KILLER", 
+                    "LIVERPOOL", "GALATASARAY", "RED BULL", "SLAYER", "MOON", "BARCELONA", "MNYONGE WAKO", "DÈMØLÎẞHÈR", "MACKON-LON",
+                    "LEFTFOOTMAGIC", "FELIXG3"
+                ];
+                championshipTeams = [];
+                localStorage.setItem("premierShowdownTeams", JSON.stringify(premierShowdownTeams));
+                localStorage.setItem("championshipTeams", JSON.stringify(championshipTeams));
+            } else if (initialSplitDone === true && (!championshipTeams || championshipTeams.length === 0)) {
+                // This handles a rare case where split was done but championshipTeams somehow got wiped
+                // In practice, promoteRelegate already sets this, but good for robustness
+                 alert("Warning: Championship teams not found after initial split. Please manually verify data or reset.");
+            }
 
 
-function initializeTables() {
-    initializeTable(groupA, "groupA");    
-}
+            initializeStandings(premierShowdownTeams);
+            initializeStandings(championshipTeams);
+
+            populateDropdowns();
+            populateResetDropdown();
+            renderTables(); // This will handle showing/hiding Championship table
+        };
+
+        function addTeam() {
+            const team = document.getElementById("newTeam").value.trim();
+            if (!team) {
+                alert("Enter a team name.");
+                return;
+            }
+            let allTeams = [...premierShowdownTeams, ...championshipTeams];
+            if (allTeams.includes(team)) {
+                alert("Team already exists in a league.");
+                return;
+            }
+            
+            // If initial split not done, add to Premier Showdown
+            if (!initialSplitDone) {
+                // Limit teams to 20 for the initial league before split
+                if (premierShowdownTeams.length >= 20) {
+                    alert("Premier Showdown already has 20 teams. Please end the season to split the leagues or delete existing teams if you wish to add more.");
+                    return;
+                }
+                premierShowdownTeams.push(team);
+            } else {
+                // Otherwise, add to Championship (as new teams would start there)
+                championshipTeams.push(team);
+            }
+            
+            standings[team] = { P: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0, GD: 0, Pts: 0 };
+
+            localStorage.setItem("premierShowdownTeams", JSON.stringify(premierShowdownTeams));
+            localStorage.setItem("championshipTeams", JSON.stringify(championshipTeams));
+            localStorage.setItem("standings", JSON.stringify(standings));
+            
+            populateDropdowns();
+            populateResetDropdown();
+            document.getElementById("newTeam").value = "";
+            renderTables();
+        }
+
+        function deleteTeam() {
+            const teamToDelete = document.getElementById("deleteTeam").value;
+            if (!confirm(`Are you sure you want to delete ${teamToDelete}? This will remove them from all leagues.`)) return;
+
+            premierShowdownTeams = premierShowdownTeams.filter(t => t !== teamToDelete);
+            championshipTeams = championshipTeams.filter(t => t !== teamToDelete);
+            delete standings[teamToDelete];
+
+            localStorage.setItem("premierShowdownTeams", JSON.stringify(premierShowdownTeams));
+            localStorage.setItem("championshipTeams", JSON.stringify(championshipTeams));
+            localStorage.setItem("standings", JSON.stringify(standings));
+
+            populateDropdowns();
+            populateResetDropdown();
+            renderTables();
+        }
+
+        function resetTeamStandings() {
+            let team = document.getElementById("resetTeam").value;
+            if (!standings[team]) {
+                alert("Team not found!");
+                return;
+            }
+
+            standings[team] = { P: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0, GD: 0, Pts: 0 };
+            
+            localStorage.setItem("standings", JSON.stringify(standings));
+            renderTables();
+            alert(`${team} standings have been reset.`);
+        }
+
+        function resetAllStandings() {
+            if (!confirm("Are you sure you want to reset ALL team standings? This cannot be undone.")) return;
+            
+            for (const team in standings) {
+                standings[team] = { P: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0, GD: 0, Pts: 0 };
+            }
+            localStorage.setItem("standings", JSON.stringify(standings));
+            renderTables();
+            alert("All team standings have been reset.");
+        }
+
+        function populateResetDropdown() {
+            let dropdown = document.getElementById("resetTeam");
+            dropdown.innerHTML = "";
+            let allTeams = [...premierShowdownTeams, ...championshipTeams];
+            allTeams = [...new Set(allTeams)]; // Ensure unique teams
+            allTeams.forEach(team => {
+                let option = document.createElement("option");
+                option.value = team;
+                option.innerText = team;
+                dropdown.appendChild(option);
+            });
+        }
         
+        function promoteRelegate() {
+            if (!confirm("Are you sure you want to end the season and perform promotion/relegation? This will reset standings for all teams and move them between leagues.")) {
+                return;
+            }
+
+            if (!initialSplitDone) {
+                // --- ONE-TIME INITIAL SPLIT LOGIC ---
+                if (premierShowdownTeams.length < 20) {
+                    alert("The Premier Showdown must have 20 teams to perform the initial split. Please add more teams or continue the season.");
+                    return;
+                }
+                
+                // Sort all 20 teams in the Premier Showdown
+                const sortedAllTeams = [...premierShowdownTeams].sort((a, b) => 
+                    standings[b].Pts - standings[a].Pts || 
+                    standings[b].GD - standings[a].GD || 
+                    standings[b].GF - standings[a].GF ||
+                    a.localeCompare(b) 
+                );
+
+                // Top 10 for Premier Showdown
+                premierShowdownTeams = sortedAllTeams.slice(0, 10);
+                
+                // Bottom 10 for Championship
+                championshipTeams = sortedAllTeams.slice(10, 20);
+
+                initialSplitDone = true; // Set the flag to true
+                localStorage.setItem("initialSplitDone", JSON.stringify(initialSplitDone));
+                alert("Initial season concluded! Premier Showdown and Championship leagues have been formed with 10 teams each. Standings are reset for the new season.");
+
+            } else {
+                // --- REGULAR SEASON PROMOTION/RELEGATION LOGIC (5 up, 5 down) ---
+                if (premierShowdownTeams.length !== 10 || championshipTeams.length !== 10) {
+                     alert("Error: Leagues must have 10 teams each for standard promotion/relegation (5 up/5 down). Please ensure 10 teams are in Premier Showdown and 10 in Championship before proceeding.");
+                     return;
+                }
+
+                const currentPremierShowdownRanked = [...premierShowdownTeams].sort((a, b) => 
+                    standings[b].Pts - standings[a].Pts || standings[b].GD - standings[a].GD || standings[b].GF - standings[a].GF || a.localeCompare(b) 
+                );
+                const currentChampionshipRanked = [...championshipTeams].sort((a, b) => 
+                    standings[b].Pts - standings[a].Pts || standings[b].GD - standings[a].GD || standings[b].GF - standings[a].GF || a.localeCompare(b) 
+                );
+
+                const relegatedTeams = currentPremierShowdownRanked.slice(-5); // Last 5 from Premier
+                const promotedTeams = currentChampionshipRanked.slice(0, 5); // Top 5 from Championship
+
+                let newPremierShowdownTeams = currentPremierShowdownRanked.slice(0, 5); // Top 5 from current Premier
+                newPremierShowdownTeams = [...newPremierShowdownTeams, ...promotedTeams]; // Add promoted teams
+
+                let newChampionshipTeams = currentChampionshipRanked.slice(5); // Remaining 5 from Championship
+                newChampionshipTeams = [...newChampionshipTeams, ...relegatedTeams]; // Add relegated teams
+
+                premierShowdownTeams = newPremierShowdownTeams;
+                championshipTeams = newChampionshipTeams;
+                alert("Season concluded! Teams have been promoted and relegated (5 up/5 down). Standings are reset for the new season.");
+            }
+
+            // Reset standings for all teams (both leagues) for the new season
+            // This applies to both the initial split and subsequent seasons
+            for (const team in standings) {
+                standings[team] = { P: 0, W: 0, D: 0, L: 0, GF: 0, GA: 0, GD: 0, Pts: 0 };
+            }
+
+            // Save the new league structures and reset standings to localStorage
+            localStorage.setItem("premierShowdownTeams", JSON.stringify(premierShowdownTeams));
+            localStorage.setItem("championshipTeams", JSON.stringify(championshipTeams));
+            localStorage.setItem("standings", JSON.stringify(standings));
+
+            // Re-initialize standings for the newly formed or re-shuffled leagues
+            initializeStandings(premierShowdownTeams);
+            initializeStandings(championshipTeams);
+
+            // Re-populate dropdowns and re-render tables
+            populateDropdowns();
+            populateResetDropdown();
+            renderTables();
+        }
     </script>
-
-<label for="resetTeam">Select Team to Reset:</label>
-<select id="resetTeam"></select>
-<button onclick="resetTeamStandings()">Reset Team Standings</button>
-    <button onclick="resetStandings()">Reset Standings</button>
-
 </body>
 </html>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
-<button onclick="confetti()">Celebrate!</button>
-
