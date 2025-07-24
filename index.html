@@ -987,6 +987,7 @@ table th, table td {
             <button onclick="resetAllStandings()">Reset All Standings</button>
             <button onclick="promoteRelegate()">End Season & Promote/Relegate</button>
             <button onclick="downloadStandingsCSV()">Download Standings</button>
+            <button onclick="localStorage.clear(); alert('Storage cleared!')">Clear Data</button>
             <button onclick="logoutAdmin()" style="background-color: #f39c12;">Logout Admin</button>
         </div>
     </div>
@@ -2116,7 +2117,7 @@ matchdayCard.id = `${leagueName.replace(/\s+/g, '-')}-matchday-${matchday}`; // 
             // Set initial page to Landing Page and highlight 'Home' link
             showSection('landingPage', document.querySelector('nav ul li a[onclick*="landingPage"]')); 
         });
-    <button onclick="localStorage.clear(); alert('Storage cleared!')">Clear Data</button>
+    
     </script>
 </body>
 </html>
