@@ -831,10 +831,10 @@ table th, table td {
             <h3>Our Dynamic League Structure:</h3>
             <p>Our eFootball league features an exciting two-tier system designed for continuous competition and growth.</p>
 <h4>Current Season (Initial Phase):</h4>
-            <p>We are in a pivotal inaugural season with all 20 teams competing in a single division. At its conclusion, based on final standings, the league will strategically split:</p>
+            <p>We are in a pivotal inaugural season with all 22 teams competing in a single division. At its conclusion, based on final standings, the league will strategically split:</p>
             <ul>
                 <li><strong>Premier Showdown (Tier 1):</strong> The top 10 teams will form the elite division.</li>
-                <li><strong>eFootball Championship (Tier 2):</strong> The bottom 10 teams will compete in the challenging second division.</li>
+                <li><strong>eFootball Championship (Tier 2):</strong> The bottom 12 teams will compete in the challenging second division.</li>
             </ul>
 
             <h4>Future Seasons (High-Stakes Promotion & Relegation):</h4>
@@ -1475,7 +1475,7 @@ function addTeam() {
                 premierShowdownTeams.push(team);
             } else {
                 if (championshipTeams.length >= 22) { // Limit for championship as well
-                     alert("Championship already has 11 teams. Please adjust league sizes or delete existing teams.");
+                     alert("Championship already has 12 teams. Please adjust league sizes or delete existing teams.");
                      return;
                 }
                 championshipTeams.push(team);
@@ -1697,14 +1697,14 @@ function promoteRelegate() {
             }
 
             // Ensure teams in Premier Showdown are 20 for the initial split
-            if (!initialSplitDone && premierShowdownTeams.length !== 20) {
-                alert(`The Premier Showdown must have exactly 20 teams (${premierShowdownTeams.length} found) to perform the initial split. Please add or remove teams.`);
+            if (!initialSplitDone && premierShowdownTeams.length !== 22) {
+                alert(`The Premier Showdown must have exactly 22 teams (${premierShowdownTeams.length} found) to perform the initial split. Please add or remove teams.`);
                 return;
             }
 
             // Ensure correct team counts for standard promotion/relegation
             if (initialSplitDone && (premierShowdownTeams.length !== 10 || championshipTeams.length !== 10)) {
-                 alert(`For standard promotion/relegation, both Premier Showdown (found ${premierShowdownTeams.length}) and Championship (found ${championshipTeams.length}) must have 10 teams each. Please adjust league sizes.`);
+                 alert(`For standard promotion/relegation, both Premier Showdown (found ${premierShowdownTeams.length}) and Championship (found ${championshipTeams.length}) must have 10 epl and 12 teams respectively. Please adjust league sizes.`);
                  return;
             }
 
@@ -1717,11 +1717,11 @@ if (!initialSplitDone) {
                 );
 
                 premierShowdownTeams = sortedAllTeams.slice(0, 10);
-                championshipTeams = sortedAllTeams.slice(10, 20);
+                championshipTeams = sortedAllTeams.slice(10, 22);
 
                 initialSplitDone = true;
                 localStorage.setItem("initialSplitDone", JSON.stringify(initialSplitDone));
-                alert("Initial season concluded! Premier Showdown and Championship leagues have been formed with 10 teams each. Standings are reset for the new season.");
+                alert("Initial season concluded! Premier Showdown and Championship leagues have been formed with 10 and 12 teams each. Standings are reset for the new season.");
 
             } else { // Standard promotion/relegation (after initial split)
                 const currentPremierShowdownRanked = [...premierShowdownTeams].sort((a, b) => 
