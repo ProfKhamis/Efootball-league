@@ -1468,14 +1468,14 @@ function addTeam() {
             if (!confirm(`Add new team "${team}"?`)) return;
 
             if (!initialSplitDone) {
-                if (premierShowdownTeams.length >= 20) {
-                    alert("Premier Showdown already has 20 teams. Please end the season to split the leagues or delete existing teams if you wish to add more.");
+                if (premierShowdownTeams.length >= 22) {
+                    alert("Premier Showdown already has 22 teams. Please end the season to split the leagues or delete existing teams if you wish to add more.");
                     return;
                 }
                 premierShowdownTeams.push(team);
             } else {
-                if (championshipTeams.length >= 20) { // Limit for championship as well
-                     alert("Championship already has 10 teams. Please adjust league sizes or delete existing teams.");
+                if (championshipTeams.length >= 22) { // Limit for championship as well
+                     alert("Championship already has 11 teams. Please adjust league sizes or delete existing teams.");
                      return;
                 }
                 championshipTeams.push(team);
