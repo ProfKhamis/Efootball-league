@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: 'Open Sans', sans-serif;
+            font-family: ' Open Sans', sans-serif;
             background-color: #f0f2f5; /* Lighter background */
             text-align: center;
             padding: 0;
@@ -1018,7 +1018,7 @@ table th, table td {
                 premierShowdownTeams = [
                     "MR DESTRUCTOR", "DIAZ", "MEGADOLLA", "KEN", "HAVE MERCY", "ALLAN FC", "SANTOS", "TIKITAKA FCB", "LEGEND KILLER", 
                     "LIVERPOOL", "GALATASARAY", "RED BULL", "SLAYER", "MOON", "BARCELONA", "MNYONGE WAKO", "DÈMØLÎẞHÈR", "MACKON-LON",
-                    "LEFTFOOTMAGIC", "FELIXG3"
+                    "LEFTFOOTMAGIC", "FELIXG3", "TEST", "SAAS"
                 ];
                 championshipTeams = []; // Starts empty
                 localStorage.setItem("premierShowdownTeams", JSON.stringify(premierShowdownTeams));
@@ -1097,7 +1097,7 @@ function initializeTable(group, tableId) {
                 initializeTable(championshipTeams, "efootballChampionshipTable");
             } else {
                 document.getElementById("efootballChampionshipTable").innerHTML = `
-                    <tr><th colspan="10" style="text-align: center;">Championship League will be formed after the first season ends and teams are split.</th></tr>
+                    <tr><th colspan="12" style="text-align: center;">Championship League will be formed after the first season ends and teams are split.</th></tr>
                 `;
             }
              applyPromotionRelegationHighlighting();
@@ -1155,7 +1155,7 @@ function initializeTable(group, tableId) {
                 const premierRowCount = premierTable.rows.length;
 
 if (premierRowCount > 1) {
-                    for (let i = 11; i <= 20 && i < premierRowCount; i++) { // Ranks 11-20
+                    for (let i = 11; i <= 22 && i < premierRowCount; i++) { // Ranks 11-20
                         if (premierTable.rows[i]) {
                             premierTable.rows[i].classList.add('relegation'); // Use relegation style for visual consistency
                             if (premierTable.rows[i].cells[0]) premierTable.rows[i].cells[0].style.backgroundColor = '#f8d7da';
